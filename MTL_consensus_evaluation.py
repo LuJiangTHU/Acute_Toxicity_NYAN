@@ -56,7 +56,7 @@ for fold in range(num_fold):
 
 
         feature_name = config['feature_name']
-        print('本次实验选用{0}分子特征'.format(feature_name))
+        print('This experiments select {0} as the feature'.format(feature_name))
 
         # Set the train and test datasets, and their corresponding data loaders
         data_test_opt = config['data_test_opt']

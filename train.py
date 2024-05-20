@@ -81,7 +81,7 @@ end_time = time.time()
 
 elaspsed_time = end_time - start_time
 
-print(f'training time：{elaspsed_time}s.')
+print(f'training time: {elaspsed_time}s.')
 
 
 

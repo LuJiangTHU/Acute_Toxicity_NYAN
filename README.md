@@ -3,79 +3,33 @@
 
 We assess the reusability of NYAN and comprehensively investigate its applicability within the context of specific chemical toxicity prediction. We used more expanded predictive toxicology datasets sourced from TOXRIC, a comprehensive and standardized toxicology database (<span style="color:red;">Lianlian Wu, Bowei Yan, Junshan Han, Ruijiang Li, Jian Xiao, Song He, Xiaochen Bo. TOXRIC: a comprehensive database of toxicological data and benchmarks, Nucleic Acids Research, 2022, https://toxric.bioinforai.tech/home</span>).
 
-For toxicity prediction tasks, we compiled 30 assay endpoints related to toxic effects, organ toxicity, and clinical toxicity. In the case of acute toxicity prediction, the dataset includes 59 endpoints with 80,081 unique compounds and 122,594 measurements.
+This repository contains the code we used to perform the multi-task learning experiments on acute toxicity dataset of TOXRIC. We firstly used the re-trained NYAN 325K model (see our another repository `NYAN_reuse`: https://github.com/LuJiangTHU/NYAN_reuse) to derive five kinds of random NYAN latent representations,  for all the 80,081 chemical compounds in acute toxicity dataset, which are saved into `NYAN_latent0.txt`, `NYAN_latent1.txt`, `NYAN_latent2.txt`, `NYAN_latent3.txt`, and `NYAN_latent4.txt`, respectively. These 5 files should be place in the path `./data/`. In addition, there also should be a molecular feature dataset file `all_descriptors.txt` in the in the path `./data/`, and Avalon features are contained by this dataset file. 
 
-Across these professional toxicity datasets, the toxicity prediction performance via NYAN latent representation and other popular molecular feature representations are experimentally benchmarked, and the adaptation of the NYAN latent representation to other downstream surrogate models are also explored.
-
-Furthermore, we integrate the variational graph encoder of NYAN with multi-task learning paradigm to boost the multi-endpoint acute toxicity prediction. The code of this part can be found in our another code repository: https://github.com/LuJiangTHU/Acute_Toxicity_NYAN.git
-
-This repository contains the code we used in reproducing the original results in ADMET and Tox21 experiments, benchmarking the performance of different molecular representation methods and the exploration of competent surrogate models in toxicity prediction based on the TOXRIC database. 
+However, the above 6 dataset files are all too large to upload to GitHub. If you need them, please contact me directly by email `lu-j13@tsinghua.org.cn`.
 
 
-
-## Installation
-```sh
-git clone https://github.com/LuJiangTHU/NYAN_reuse.git
-cd NYAN_reuse
+## Code environment
+```
+python==3.11.5
+torch==2.2.0
+torchaudio==2.2.0
+torchnet==0.0.4
+pandas==2.1.4
 ```
 
+## Training your MT-NYAN
+The `./config/cfg_Avalon+NYAN_fold0_lat0.py` can be used to control the training configurations and model architecture. Using the following command to train your NYAN framework:
 ```sh
-conda env create -f environment.yml
-conda activate nyan
+python train.py --config cfg_Avalon+NYAN_fold0_lat0 
 ```
+The optimal model will be saved into `./experiments/cfg_Avalon+NYAN_fold0_lat0` correspondingly.
 
-
-## Reproduction
-In this code repository, most of core codes were directly downloaded from the code repository provided by the authors of original article (https://github.com/Chokyotager/NotYetAnotherNightshade.git). Original article used 650K molecular data from ZINC database to train their framework and then obtained a model named `ZINC-extmodel5hk-3M`. In contrast, we only used half of training data of original paper (325K molecules versus original 650K, and 325K is a subset of 650K) to retrain the NYAN framework and then obtained another model `ZINC-extmodel5hk-3M-325K`. Our reproduction experiments were based on this retrained NYAN model.
-
-### Obtaining the training data and retraining NYAN
-The `/datasets/centres.smi` contains 700K molecular SMILEs. Original article used the anterior 650K as its training data, while we used the anterior 325K SMILEs. You can sequentially use the 3 scripts, including `get_maccs_morgan.py`, `get_mordred.py`, and `make_3m.py` in the folder of `/misc-code/fingerprinting/`, to obtain the combined training set named `'datasets/3m_512.tsv'`.
-
-The `config.json` can be used to control the training configurations including the number of training data. Using the following command to retrain your own NYAN framework:
+## Evaluating 
+After trained using 5 cross-validation folds and 5 random NYAN latent dataset file, you can use the `MTL_consensus_evaluation.py` to evaluate the final averaged  performance of 5 cross-validation folds:
 ```sh
-python train.py
+python MTL_consensus_evaluation.py
 ```
- 
-### Prediction on ADMET
-Using the following command to preform the ADMET prediction:
-```sh
-python NYAN_pred_for_ADMET.py
-```
-
-The output results will be saved into `/results_reproduction_ADMET/`.
-
-### Prediction on Tox21
-Using the following command to preform the Tox21 prediction:
-```sh
-python NYAN_pred_for_tox21.py
-```
-
-The output results will be saved into the folder of `/result_reproduction_tox21/`.
-
- 
-## Benchmarking of different molecular representation methods
-Please use "otherFG_pred_for_toxric.py" to run on the 30 datasets from TOXRIC database with different molecular features inlcluding Rdkit2D, Mordred, Avalon, Atom pair, Morgan512, Morgan1024, Topological Torsion, MACCS and ECFP2:
-```sh
-python otherFG_pred_for_toxric.py
-```
-The output will be tab-delimited and the detailed results w.r.t different molecular representation will be saved into the folder of `/result_otherFG_toxric/`. 
-
-## Exploring different surrogate models
-Please use "NYAN_pred_for_toxric.py" to run on the 30 datasets from TOXRIC database with other popular toxicity classification algorithm including Extra Tree, Deep Forest, Support Vector Machine (SVM), Random Forest (RF), Adaboost, Light GBM (LGB), gradient-boosted decision tree (GBDT), and Xgboost (XGB):
-```sh
-python NYAN_pred_for_toxric.py
-```
-The output will be tab-delimited and the detailed results w.r.t different surrogate models will be saved into the folder of `/result_toxric/`.
-
-## Deriving the NYAN latent representations for acute toxicity data
-Please use "encoder_59endpoints_smiles.py" to derive the 64-dimension NYAN latent representation for the 80081 chemical compounds in acute toxicity dataset:
-```sh
-python encoder_59endpoints_smiles.py
-```
-The generated NYAN latent representations will be tab-delimited e saved into the folder of `/datasets/MTL/`.
-
-## Enhancing the multi-endpoint acute toxicity prediction using NYAN
-For the multi-task learning experiments on acute toxicity prediction, we firstly used the re-trained NYAN 325K model to derive the NYAN latent representations for the chemical compounds in acute toxicity dataset (see the previous section), and then transfer these NYAN latent representations to our another code project (`Acute_Toxicity_NYAN`, see https://github.com/LuJiangTHU/Acute_Toxicity_NYAN.git) to perform multi-endpoint acute toxicity prediction experiments.
+The results will be saved as the form of tables and placed in the path  `./table_results`. 
 
 
 
