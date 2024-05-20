@@ -18,18 +18,18 @@ pandas==2.1.4
 ```
 
 ## Training your MT-NYAN
-The `./config/cfg_Avalon+NYAN_fold0_lat0.py` can be used to control the training configurations and model architecture. Using the following command to train your NYAN framework:
+The `./config/cfg_Avalon+NYAN_fold0_lat0.py` can be used to control the training configurations and model architecture. Using the following command to train your MT-NYAN model:
 ```sh
 python train.py --config cfg_Avalon+NYAN_fold0_lat0 
 ```
 The optimal model will be saved into `./experiments/cfg_Avalon+NYAN_fold0_lat0` correspondingly.
 
 ## Evaluating 
-After trained using 5 cross-validation folds and 5 random NYAN latent dataset file, you can use the `MTL_consensus_evaluation.py` to evaluate the final averaged  performance of 5 cross-validation folds:
+After trained using 5 cross-validation folds and 5 NYAN latent dataset files, you can use the `MTL_consensus_evaluation.py` to evaluate the final averaged  performance on 5 cross-validation folds:
 ```sh
 python MTL_consensus_evaluation.py
 ```
-The results will be saved as the form of tables and placed in the path  `./table_results`. 
+The results will be saved as the form of tables and placed under the folder  `./table_results/`. 
 
 
 
