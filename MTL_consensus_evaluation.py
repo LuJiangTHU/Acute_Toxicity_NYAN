@@ -95,6 +95,8 @@ for fold in range(num_fold):
 
     avg_pred = torch.stack(pred).mean(0)
 
+
+
     RMSE, RMSE_avg = calculate_RMSE(pred=avg_pred, target=tar_tst, target_mask=tar_mask_tst)
     R2, R2_avg = calculate_R2(pred=avg_pred, target=tar_tst, target_mask=tar_mask_tst)
 

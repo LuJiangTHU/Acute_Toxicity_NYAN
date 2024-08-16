@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 
-class FCL(nn.Module):  # 全连接层
+class FCL(nn.Module):
     def __init__(self, in_features, out_features, dropout_prob = 0):
         super(FCL, self).__init__()
         self.layers = nn.Sequential()
@@ -18,7 +18,7 @@ class FCL(nn.Module):  # 全连接层
         return out
 
 
-class DNN(nn.Module):  # 多任务学习器
+class DNN(nn.Module):
     def __init__(self, opt):
         super(DNN, self).__init__()
         self.in_features = opt['in_features']
